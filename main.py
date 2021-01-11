@@ -59,7 +59,7 @@ while option != "5":
                 pd = gen_password(int(size))
             else:
                 pd = input("Enter the new password:\t")
-            mdb.addWebsite(name, pd)
+            mdb.addWebsite(site_name, pd)
 
         elif option == "6":
             break
