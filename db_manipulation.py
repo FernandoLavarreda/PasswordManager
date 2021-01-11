@@ -1,10 +1,15 @@
+# Fernando Jose Lavarreda Urizar
+# Basic DataBase Manipulation
+
+import pyperclip
 import sqlite3 as sql
+from datetime import date
 
 def addWebsite(name, password):
     """Add a new website and its correspondig password to the database"""
     db = sql.connect("data.db")
     cr = db.cursor()
-    cr.execute("INSERT INTO w3b VALUES(?, ?)", (name, password))
+    cr.execute("INSERT INTO w3b VALUES(?, ?, ?)", (name, password, str(date.today())))
     db.commit()
     db.close()
 
@@ -13,35 +18,52 @@ def viewAll():
     db = sql.connect("data.db")
     cr = db.cursor()
     cr.execute("SELECT * FROM w3b")
-    info_from_db = ""
+    info_from_db = "ID\tWebsite\t\tPassword\tDate\n"+"-"*50+"\n"
     counter = 1
     for row in cr.fetchall():
-        info_from_db += str(counter)+".\t"+row+"\n"
+        info_from_db += str(counter)+".\t"+row[0]+"\t\t"+row[1]+"\t\t"+row[2]+"\n"
         counter+=1
     db.close()
+    info_from_db = info_from_db.replace("(", "")
+    info_from_db = info_from_db.replace(")", "")
+    info_from_db = info_from_db.replace(", ", "\t")
     return info_from_db
 
 def deleteWebsite(name):
     """Delete a row with the matching name"""
-    db = sql.connect("data.db")
-    cr = db.cursor()
-    cr.execute("DELETE FROM w3b WHERE site=?", (name, ))
-    db.commit()
-    db.close()
+    if 'M4IN' != name:
+        db = sql.connect("data.db")
+        cr = db.cursor()
+        cr.execute("DELETE FROM w3b WHERE site=?", (name, ))
+        db.commit()
+        db.close()
 
 def changePassword(name, new_password):
     """Alter database column password"""
     db = sql.connect("data.db")
     cr = db.cursor()
-    cr.execute("UPDATE w3b SET pwd=? WHERE site=?", (new_password, name))
+    cr.execute("UPDATE w3b SET pwd=?, date=? WHERE site=?", (new_password, str(date.today()), name))
     db.commit()
     db.close()
 
-
-if __name__ == "__main__":
+def copyToClipboard(number):
+    """Enter row number to copy password to clipboard"""
     db = sql.connect("data.db")
     cr = db.cursor()
-    cr.execute("CREATE TABLE w3b(site text, pwd txt);")
-    cr.execute("INSERT INTO w3b VALUES('M4IN', 'NULL')")
-    db.commit()
+    content = cr.execute("SELECT pwd FROM w3b WHERE rowid=?", (number,)).fetchall()
+    if content:
+        pyperclip.copy(content[0][0])
     db.close()
+
+def viewOne(name):
+    """See the password corresponding to one row"""
+    db = sql.connect("data.db")
+    cr = db.cursor()
+    content = cr.execute("SELECT pwd FROM w3b WHERE site=?", (name,)).fetchone()
+    if content:
+        return content
+    else:
+        return ""
+
+if __name__ == "__main__":
+    print(viewAll())
