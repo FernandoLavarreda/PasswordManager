@@ -21,6 +21,11 @@ def gen_password(length):
 option = "n"
 while option != "6":
     if mdb.viewOne("M4IN")[0] != "NULL" and mdb.viewOne("M4IN")[0] != "":
+        master = input("Enter master password or Q to quit:\t")
+        while master != mdb.viewOne("M4IN")[0] and master != "Q":
+            master = input("Try again:\t")
+        if master == "Q":
+            break
         print("Password Manager:\n1. View all passwords\n2. Change Password\n3. Delete site\n4. Copy to clipboard\n5. Add new Site\n6. EXIT\n")
         option = input("Option:\t")
         print("\n")
