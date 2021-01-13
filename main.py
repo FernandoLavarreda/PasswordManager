@@ -6,11 +6,11 @@ import db_manipulation as mdb
 
 def gen_password(length):
     """Generate a random password given a desired length"""
-    chars = "abcdefghijklmnopqrstuvwxyz0123456789!?()\\/&%$#"
+    chars = "abcdefghijklmnopqrstuvwxyz0123456789!?()/&%$#"
     pwd = ""
     for _ in range(length):
         esc = rd.choice([0, 1])
-        rnd = rd.randint(0, len(chars))
+        rnd = rd.randint(0, len(chars)-1)
         if esc == 1 and rnd <= 25:
             pwd+=chars[rnd].upper()
         else:
