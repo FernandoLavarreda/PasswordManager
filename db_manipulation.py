@@ -1,6 +1,7 @@
 # Fernando Jose Lavarreda Urizar
 # Basic DataBase Manipulation
 
+import math
 import pyperclip
 import sqlite3 as sql
 from datetime import date
@@ -18,10 +19,12 @@ def viewAll():
     db = sql.connect("data.db")
     cr = db.cursor()
     cr.execute("SELECT * FROM w3b")
-    info_from_db = "ID\tWebsite\t\tPassword\tDate\n"+"-"*50+"\n"
+    info_from_db = "ID\tWebsite\t\t\t\tPassword\t\t\tDate\n"+"-"*95+"\n"
     counter = 1
     for row in cr.fetchall():
-        info_from_db += str(counter)+".\t"+row[0]+"\t\t"+row[1]+"\t\t"+row[2]+"\n"
+        nmb_tabs = math.floor(len(row[0])/8)
+        nmb_tabs2 = math.floor(len(row[1])/8)
+        info_from_db += str(counter)+".\t"+row[0]+"\t"*(4-nmb_tabs)+row[1]+"\t"*(4-nmb_tabs2)+row[2]+"\n"
         counter+=1
     db.close()
     info_from_db = info_from_db.replace("(", "")
@@ -50,7 +53,7 @@ def copyToClipboard(number):
     """Enter row number to copy password to clipboard"""
     db = sql.connect("data.db")
     cr = db.cursor()
-    content = cr.execute("SELECT pwd FROM w3b WHERE rowid=?", (number,)).fetchall()
+    content = cr.execute("SELECT pwd FROM w3b WHERE rowid=?", (number+1,)).fetchall()
     if content:
         pyperclip.copy(content[0][0])
     db.close()
